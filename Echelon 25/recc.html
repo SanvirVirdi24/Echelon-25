@@ -1,0 +1,240 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothing Recommendation System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .recommendation-section {
+            margin-bottom: 40px;
+        }
+        .placeholder-img {
+            background-color: #f8f9fa;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Clothing Recommendation System</h1>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Get User Recommendations</h5>
+                        <div class="mb-3">
+                            <label for="userIdInput" class="form-label">User ID</label>
+                            <input type="text" class="form-control" id="userIdInput" placeholder="Enter user ID">
+                        </div>
+                        <button class="btn btn-primary" id="getUserRecs">Get Recommendations</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Get Product Recommendations</h5>
+                        <div class="mb-3">
+                            <label for="productIdInput" class="form-label">Product ID</label>
+                            <input type="text" class="form-control" id="productIdInput" placeholder="Enter product ID">
+                        </div>
+                        <button class="btn btn-primary" id="getProductRecs">Get Similar Products</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Trending</h5>
+                        <div class="mb-3">
+                            <label for="categorySelect" class="form-label">Category</label>
+                            <select class="form-select" id="categorySelect">
+                                <option value="T-Shirts">T-Shirts</option>
+                                <option value="Jeans">Jeans</option>
+                                <option value="Dresses">Dresses</option>
+                                <option value="Shoes">Shoes</option>
+                                <option value="Sweaters">Sweaters</option>
+                                <option value="Jackets">Jackets</option>
+                                <option value="Accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="getCategoryRecs">Get Popular in Category</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Quick Options</h5>
+                        <button class="btn btn-success mb-2 w-100" id="getPopularRecs">Show Popular Products</button>
+                        <button class="btn btn-info w-100" id="getNewUserRecs">New User Recommendations</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="recommendationsContainer">
+            <!-- Recommendations will be displayed here -->
+            <div class="text-center py-5">
+                <p class="text-muted">Select an option above to see recommendations</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for frontend demo purposes
+        // In a real application, this would come from the backend API
+        const sampleData = {
+            users: ["ae480c1c-9745-4d76-93ac-346ef28ddb26", "ed203761-7216-450c-a188-ab5a912fb354"],
+            products: ["d5e29dd8-9f1d-4f50-86c4-75a01c459f76", "fc7c034d-272e-4877-a1e1-90b798608a96"]
+        };
+
+        // Base URL for the API
+        const apiBaseUrl = 'http://localhost:5000';
+
+        // Function to display recommendations
+        function displayRecommendations(title, recommendations) {
+            const container = document.getElementById('recommendationsContainer');
+            
+            // Create HTML for the recommendations
+            let html = `
+                <div class="recommendation-section">
+                    <h2 class="mb-4">${title}</h2>
+                    <div class="row">
+            `;
+            
+            // Add each product
+            recommendations.forEach(product => {
+                html += `
+                    <div class="col-md-4">
+                        <div class="product-card">
+                            <div class="placeholder-img">
+                                <span class="text-muted">${product.category}</span>
+                            </div>
+                            <div class="mt-3">
+                                <h5>${product.category}</h5>
+                                <p class="text-muted">Product ID: ${product.product_id}</p>
+                                <p class="fw-bold">$${product.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Function to fetch recommendations from API
+        async function fetchRecommendations(endpoint) {
+            try {
+                // For demo purposes, use sample data instead of actual API calls
+                // In a real application, you would uncomment the fetch call below
+                
+                /*
+                const response = await fetch(apiBaseUrl + endpoint);
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                const data = await response.json();
+                return data;
+                */
+                
+                // Simulate API response with sample data
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        // Generate sample recommendations
+                        const dummyRecommendations = Array(6).fill().map((_, i) => ({
+                            product_id: `product-${i+1}`,
+                            category: ['T-Shirts', 'Jeans', 'Dresses', 'Shoes', 'Sweaters', 'Jackets'][Math.floor(Math.random() * 6)],
+                            price: Math.floor(Math.random() * 200) + 20
+                        }));
+                        
+                        resolve({
+                            recommendations: dummyRecommendations,
+                            similar_products: dummyRecommendations,
+                            popular_products: dummyRecommendations,
+                            recommendations_for_new_users: dummyRecommendations
+                        });
+                    }, 500);
+                });
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                return null;
+            }
+        }
+
+        // Set up event listeners for buttons
+        document.getElementById('getUserRecs').addEventListener('click', async () => {
+            const userId = document.getElementById('userIdInput').value || sampleData.users[0];
+            const data = await fetchRecommendations(`/recommendations/user/${userId}`);
+            if (data) {
+                displayRecommendations(`Recommendations for User: ${userId}`, data.recommendations || []);
+            }
+        });
+
+        document.getElementById('getProductRecs').addEventListener('click', async () => {
+            const productId = document.getElementById('productIdInput').value || sampleData.products[0];
+            const data = await fetchRecommendations(`/recommendations/product/${productId}`);
+            if (data) {
+                displayRecommendations(`Similar Products to: ${productId}`, data.similar_products || []);
+            }
+        });
+
+        document.getElementById('getCategoryRecs').addEventListener('click', async () => {
+            const category = document.getElementById('categorySelect').value;
+            const data = await fetchRecommendations(`/recommendations/category/${category}`);
+            if (data) {
+                displayRecommendations(`Popular Products in ${category}`, data.popular_products || []);
+            }
+        });
+
+        document.getElementById('getPopularRecs').addEventListener('click', async () => {
+            const data = await fetchRecommendations('/recommendations/popular');
+            if (data) {
+                displayRecommendations('Most Popular Products', data.popular_products || []);
+            }
+        });
+
+        document.getElementById('getNewUserRecs').addEventListener('click', async () => {
+            const data = await fetchRecommendations('/recommendations/new_user');
+            if (data) {
+                displayRecommendations('Recommended for New Users', data.recommendations_for_new_users || []);
+            }
+        });
+
+        // Add sample user IDs to the datalist
+        document.getElementById('userIdInput').value = sampleData.users[0];
+        document.getElementById('productIdInput').value = sampleData.products[0];
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
